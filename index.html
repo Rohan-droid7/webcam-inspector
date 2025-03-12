@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Hardware Inspector — Deep Device Analysis</title>
+    <meta name="description" content="Comprehensive webcam hardware inspector showing all device capabilities, settings, formats, and hardware-level properties.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge">🔬 Deep Hardware Analysis</div>
+            <h1>Webcam <span class="gradient-text">Inspector</span></h1>
+            <p class="hero-subtitle">
+                Extract every piece of information your browser can access from connected camera devices —
+                resolution ranges, exposure controls, color settings, supported formats, and more.
+            </p>
+            <button id="connect-btn" class="glow-btn">
+                <span class="btn-icon">📷</span>
+                <span class="btn-text">Connect Camera</span>
+                <span class="btn-sub">Requires camera permission</span>
+            </button>
+            <div class="features">
+                <div class="feat"><span>📐</span> Resolution &amp; FPS Ranges</div>
+                <div class="feat"><span>🎛️</span> Exposure &amp; Focus Controls</div>
+                <div class="feat"><span>🔍</span> Zoom &amp; Image Processing</div>
+                <div class="feat"><span>⚡</span> All Browser Constraints</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Error Display -->
+    <div id="error-display" class="error-box hidden">
+        <span class="error-icon">⚠️</span>
+        <p id="error-message"></p>
+        <button id="retry-btn" class="retry-btn">Try Again</button>
+    </div>
+
+    <!-- Results Section -->
+    <section id="results" class="results hidden">
+        <!-- Top Bar with Preview -->
+        <div class="results-header">
+            <div class="preview-wrap">
+                <video id="video-preview" autoplay playsinline muted></video>
+                <span id="res-badge" class="res-badge">--</span>
+            </div>
+            <div class="conn-info">
+                <h2 id="device-name">Camera Connected</h2>
+                <div class="conn-meta">
+                    <span class="dot-live"></span>
+                    <span id="stream-status">Live</span>
+                    <span class="sep">·</span>
+                    <span id="device-count-label">0 devices</span>
+                </div>
+            </div>
+            <button id="disconnect-btn" class="disconnect-btn">✕ Disconnect</button>
+        </div>
+
+        <!-- Info Cards Grid -->
+        <div class="cards-grid">
+            <!-- Media Devices Found -->
+            <div class="card" id="card-devices">
+                <div class="card-head">
+                    <span class="ci">🖥️</span>
+                    <h3>Media Devices</h3>
+                    <span id="dev-count" class="badge">0</span>
+                </div>
+                <div class="card-body" id="devices-content"></div>
+            </div>
+
+            <!-- Video Track Capabilities -->
+            <div class="card wide" id="card-caps">
+                <div class="card-head">
+                    <span class="ci">📐</span>
+                    <h3>Video Track Capabilities</h3>
+                    <span class="tag">getCapabilities()</span>
+                </div>
+                <div class="card-body" id="caps-content"></div>
+            </div>
+
+            <!-- Current Settings -->
+            <div class="card" id="card-settings">
+                <div class="card-head">
+                    <span class="ci">⚙️</span>
+                    <h3>Current Track Settings</h3>
+                    <span class="tag">getSettings()</span>
+                </div>
+                <div class="card-body" id="settings-content"></div>
+            </div>
+
+            <!-- ImageCapture / Photo Capabilities -->
+            <div class="card wide" id="card-photo">
+                <div class="card-head">
+                    <span class="ci">🎛️</span>
+                    <h3>ImageCapture / Photo Capabilities</h3>
+                    <span class="tag">PhotoCapabilities</span>
+                </div>
+                <div class="card-body" id="photo-content"></div>
+            </div>
+
+            <!-- Supported Constraints -->
+            <div class="card" id="card-supported">
+                <div class="card-head">
+                    <span class="ci">✅</span>
+                    <h3>Supported Constraints</h3>
+                    <span class="tag">getSupportedConstraints()</span>
+                </div>
+                <div class="card-body" id="supported-content"></div>
+            </div>
+
+            <!-- Stream & Track Info -->
+            <div class="card" id="card-stream">
+                <div class="card-head">
+                    <span class="ci">📡</span>
+                    <h3>Stream &amp; Track Info</h3>
+                </div>
+                <div class="card-body" id="stream-content"></div>
+            </div>
+
+            <!-- Resolution Probe -->
+            <div class="card full" id="card-resolutions">
+                <div class="card-head">
+                    <span class="ci">📊</span>
+                    <h3>Resolution Probe</h3>
+                    <span class="tag" id="res-probe-tag">Tests common resolutions</span>
+                </div>
+                <div class="card-body" id="resolutions-content"></div>
+            </div>
+
+            <!-- Raw JSON Export -->
+            <div class="card full" id="card-raw">
+                <div class="card-head">
+                    <span class="ci">{ }</span>
+                    <h3>Raw JSON Export</h3>
+                    <button id="copy-btn" class="copy-btn">📋 Copy</button>
+                </div>
+                <div class="card-body">
+                    <pre id="raw-json" class="raw-json"></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer" class="footer hidden">
+        <p>
+            This shows everything accessible via <strong>browser APIs</strong>.
+            For kernel-level details (USB descriptors, driver stacks, PnP device properties, registry config),
+            run the included <code>Get-WebcamHardwareInfo.ps1</code> PowerShell script as Administrator.
+        </p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
